@@ -5,13 +5,21 @@ var fs_1 = require("fs");
 fs_1.readFile("input.txt", "utf8", advent);
 var Event = /** @class */ (function () {
     function Event(rawEventString) {
-        var _a;
-        this.dateString = "";
-        var rawDateString;
-        _a = rawEventString.split("] "), rawDateString = _a[0], this.eventString = _a[1];
-        for (var i = 0; i < dateTimeParts.length; i++) {
-            this.dateString += dateTimeParts[i];
-        }
+        var _a, _b, _c;
+        var rawString, rawDate, rawTime;
+        var stringYear, stringMonth, stringDay;
+        _a = rawEventString.split("] "), rawString = _a[0], this.eventString = _a[1];
+        // remove the "["
+        rawString = rawString.substring(1);
+        _b = rawString.split(" "), rawDate = _b[0], rawTime = _b[1];
+        _c = rawDate.split("-"), stringYear = _c[0], stringMonth = _c[1], stringDay = _c[2];
+        this.year = parseInt(stringYear);
+        this.month = parseInt(stringMonth);
+        this.day = parseInt(stringDay);
+        // PROBLEEM: parseint laat voorloopnullen weglopen, dus ik wil deze integers als string. 
+        console.log(this.year);
+        console.log(this.month);
+        console.log(this.day);
     }
     return Event;
 }());

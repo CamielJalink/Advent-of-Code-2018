@@ -5,15 +5,27 @@ readFile("input.txt", "utf8", advent);
 class Event {
 
     eventString: string;
-    dateString: string = ""; 
+    year: number;
+    month: number;
+    day: number;
 
     constructor(rawEventString: string){
-        let rawDateString: string;
-        [rawDateString, this.eventString] = rawEventString.split("] ");
+        let rawString: string, rawDate: string, rawTime: string;
+        let stringYear: string, stringMonth: string, stringDay: string;
 
-        for(let i = 0; i < dateTimeParts.length; i++){
-            this.dateString += dateTimeParts[i];
-        }
+        [rawString, this.eventString] = rawEventString.split("] ");
+        // remove the "["
+        rawString = rawString.substring(1);
+        [rawDate, rawTime] = rawString.split(" ");
+        
+        [stringYear, stringMonth, stringDay] = rawDate.split("-");
+        this.year = parseInt(stringYear);
+        this.month = parseInt(stringMonth); 
+        this.day = parseInt(stringDay);
+        // PROBLEEM: parseint laat voorloopnullen weglopen, dus ik wil deze integers als string. 
+        console.log(this.year);
+        console.log(this.month);
+        console.log(this.day);
     }
 }
 
