@@ -3,32 +3,18 @@ import { readFile } from "fs";
 readFile("input.txt", "utf8", advent);
 
 class Event {
-
     eventString: string;
-    year: number;
-    month: number;
-    day: number;
+    dateOfEvent: Date;
 
     constructor(rawEventString: string){
-        let rawString: string, rawDate: string, rawTime: string;
-        let stringYear: string, stringMonth: string, stringDay: string;
-
-        [rawString, this.eventString] = rawEventString.split("] ");
-        // remove the "["
-        rawString = rawString.substring(1);
-        [rawDate, rawTime] = rawString.split(" ");
-        
-        [stringYear, stringMonth, stringDay] = rawDate.split("-");
-        this.year = parseInt(stringYear);
-        this.month = parseInt(stringMonth); 
-        this.day = parseInt(stringDay);
-        // PROBLEEM: parseint laat voorloopnullen weglopen, dus ik wil deze integers als string. 
-        console.log(this.year);
-        console.log(this.month);
-        console.log(this.day);
+        let rawDateTime: string;
+        [rawDateTime, this.eventString] = rawEventString.split("] ");
+        rawDateTime = rawDateTime.substring(1);
+        this.dateOfEvent = new Date(rawDateTime);
     }
 }
 
+// Main function called when the program is started
 function advent(error: Error, input: string){
     let inputArray: string[] = input.split("\n");
     let eventArray: Event[] = [];
@@ -38,12 +24,17 @@ function advent(error: Error, input: string){
         eventArray.push(event);
     }
 
-   // console.log(eventArray); 
+    // Hieronder ben ik gebleven
+    let orderedEventArray: Event[] = []; 
+    eventArray.forEach(event => {
+        for(let i = 0; i < eventArray.length; i++){
+            if(event.dateOfEvent > eventArray[i].dateOfEvent){
+
+            }
+        }
+    });
+   console.log(eventArray); 
 }
-
-
-
-
 
 // Program plans:
 // Sort all 'events' based on their year, month, day, hour and minutes
