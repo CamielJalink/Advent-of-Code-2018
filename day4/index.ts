@@ -4,16 +4,40 @@ readFile("input.txt", "utf8", advent);
 
 class Event {
     eventString: string;
-    dateOfEvent: Date;
+    dateOfEvent: Date = new Date();
 
     constructor(rawEventString: string){
         let rawDateTime: string;
         [rawDateTime, this.eventString] = rawEventString.split("] ");
-        rawDateTime = rawDateTime.substring(1);
-        rawDateTime = rawDateTime + ":00";
-        console.log(rawDateTime);
+        // Remove the [ in front of the rawDateTime string, and add "Z" for UTC time format.
+        rawDateTime = rawDateTime.substring(1) + "Z";
         this.dateOfEvent = new Date(rawDateTime);
-        console.log(this.dateOfEvent);
+    }
+}
+
+class Guard {
+    id: string;
+    events: Event[] = []; 
+    totalMinutesAsleep: number = 0;
+    sleepArray: number[] = [];
+
+    constructor(id: string){
+        this.id = id;
+        for(let i = 0; i < 60; i++){
+            this.sleepArray.push(0);
+        }
+    }
+
+    addEvent(event: Event){
+        this.events.push(event);
+    }
+
+    updateSleep(startMinute:number, duration:number){
+        this.totalMinutesAsleep += duration;
+        // 
+        for(let i = startMinute; i < startMinute + duration; i++){
+            this.sleepArray[i] ++;
+        }
     }
 }
 
@@ -27,6 +51,7 @@ function advent(error: Error, input: string){
         eventArray.push(event);
     }
 
+    // Sort all events so that the event with the oldest date is listed first.
     eventArray.sort(function(a, b) {
         if (a.dateOfEvent < b.dateOfEvent) {
             return -1;
@@ -37,5 +62,40 @@ function advent(error: Error, input: string){
         return 0;
     })
 
-   // console.log(eventArray);
+
+    let guardArray: Guard[] = [];
+    let activeGuard: Guard = new Guard(" ");
+    for(let i = 0; i < eventArray.length; i++){
+
+        if(eventArray[i].eventString.indexOf("Guard #") !== -1){
+
+            let guardId: string = eventArray[i].eventString.split(" begins shift")[0].substring(7);
+            let isNewGuard: boolean = true; 
+
+            // Is this a new guard?
+            for(let j = 0; j < guardArray.length; j++){
+                if(guardArray[j].id == guardId){
+                    isNewGuard = false; 
+                    activeGuard = guardArray[j];
+                }
+            }
+
+            // If it's a new guard, create it.
+            if(isNewGuard){
+                let guard: Guard = new Guard(guardId);
+                guardArray.push(guard);
+                activeGuard = guard;
+            }
+        }
+        activeGuard.addEvent(eventArray[i]);
+    }
+
+    guardArray.forEach(function(guard: Guard){
+        console.log(guard.events.length);
+    })
+
+    // Nu ik alle guards heb met al hun events, kan ik per guard bekijken welke minuten die slaapt,
+    // 
+    // En welke minuut hij het meeste in slaapt.
+
 }
