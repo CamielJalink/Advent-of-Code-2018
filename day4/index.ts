@@ -10,7 +10,10 @@ class Event {
         let rawDateTime: string;
         [rawDateTime, this.eventString] = rawEventString.split("] ");
         rawDateTime = rawDateTime.substring(1);
+        rawDateTime = rawDateTime + ":00";
+        console.log(rawDateTime);
         this.dateOfEvent = new Date(rawDateTime);
+        console.log(this.dateOfEvent);
     }
 }
 
@@ -24,22 +27,15 @@ function advent(error: Error, input: string){
         eventArray.push(event);
     }
 
-    // Hieronder ben ik gebleven
-    let orderedEventArray: Event[] = []; 
-    eventArray.forEach(event => {
-        for(let i = 0; i < eventArray.length; i++){
-            if(event.dateOfEvent > eventArray[i].dateOfEvent){
-
-            }
+    eventArray.sort(function(a, b) {
+        if (a.dateOfEvent < b.dateOfEvent) {
+            return -1;
         }
-    });
-   console.log(eventArray); 
+        if (a.dateOfEvent > b.dateOfEvent) {
+            return 1;
+        }
+        return 0;
+    })
+
+   // console.log(eventArray);
 }
-
-// Program plans:
-// Sort all 'events' based on their year, month, day, hour and minutes
-
-// 1518-05-27 23:59   is later dan 1518-05-27 00:01
-// Dus misschien alles samen als number parsen door alle tekens eraf te halen? 
-// Een shift class die events bekijkt die bij elkaar horen? OF is dat niet relevant?
-// Ik wil alle minuten tellen. Shift is obvious als alles netjes op een rijtje staat adhv wie active is.
