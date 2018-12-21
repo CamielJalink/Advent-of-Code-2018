@@ -17,7 +17,6 @@ var Event = /** @class */ (function () {
 }());
 var Guard = /** @class */ (function () {
     function Guard(id) {
-        this.events = [];
         this.totalMinutesAsleep = 0;
         this.sleepArray = [];
         this.id = id;
@@ -25,12 +24,8 @@ var Guard = /** @class */ (function () {
             this.sleepArray.push(0);
         }
     }
-    Guard.prototype.addEvent = function (event) {
-        this.events.push(event);
-    };
     Guard.prototype.updateSleep = function (startMinute, duration) {
         this.totalMinutesAsleep += duration;
-        // 
         for (var i = startMinute; i < startMinute + duration; i++) {
             this.sleepArray[i]++;
         }
@@ -57,6 +52,7 @@ function advent(error, input) {
     });
     var guardArray = [];
     var activeGuard = new Guard(" ");
+    // Loop through all events and determine active guard and their sleep pattern
     for (var i = 0; i < eventArray.length; i++) {
         if (eventArray[i].eventString.indexOf("Guard #") !== -1) {
             var guardId = eventArray[i].eventString.split(" begins shift")[0].substring(7);
@@ -68,19 +64,51 @@ function advent(error, input) {
                     activeGuard = guardArray[j];
                 }
             }
-            // If it's a new guard, create it.
+            // If it's a new guard, create a new guard object.
             if (isNewGuard) {
                 var guard = new Guard(guardId);
                 guardArray.push(guard);
                 activeGuard = guard;
             }
         }
-        activeGuard.addEvent(eventArray[i]);
+        // If a guard wakes up, check the previous event for sleep and determine sleep start and duration.
+        if (eventArray[i].eventString.indexOf("wakes up") !== -1) {
+            if (eventArray[i - 1].eventString.indexOf("falls asleep") !== -1) {
+                var sleepStart = eventArray[i - 1].dateOfEvent.getUTCMinutes();
+                var sleepDuration = eventArray[i].dateOfEvent.getUTCMinutes() - sleepStart;
+                activeGuard.updateSleep(sleepStart, sleepDuration);
+            }
+        }
     }
-    guardArray.forEach(function (guard) {
-        console.log(guard.events.length);
-    });
-    // Nu ik alle guards heb met al hun events, kan ik per guard bekijken welke minuten die slaapt,
-    // 
-    // En welke minuut hij het meeste in slaapt.
+    // This part of the code is only relevant for part A of the challenge
+    var mostSleepyGuard = guardArray[0];
+    for (var i = 1; i < guardArray.length; i++) {
+        if (guardArray[i].totalMinutesAsleep > mostSleepyGuard.totalMinutesAsleep) {
+            mostSleepyGuard = guardArray[i];
+        }
+    }
+    var minuteMostAsleep = 0;
+    var timesAsleep = 0;
+    for (var i = 0; i < mostSleepyGuard.sleepArray.length; i++) {
+        if (mostSleepyGuard.sleepArray[i] > timesAsleep) {
+            minuteMostAsleep = i;
+            timesAsleep = mostSleepyGuard.sleepArray[i];
+        }
+    }
+    console.log("Answer part A = " + minuteMostAsleep * parseInt(mostSleepyGuard.id));
+    //-----------------------------------------------------------------------
+    // This part of the code is only relevant for part B of the challenge
+    minuteMostAsleep = 0;
+    timesAsleep = 0;
+    var targetGuard = guardArray[0];
+    for (var i = 0; i < guardArray.length; i++) {
+        for (var j = 0; j < guardArray[i].sleepArray.length; j++) {
+            if (guardArray[i].sleepArray[j] > timesAsleep) {
+                minuteMostAsleep = j;
+                timesAsleep = guardArray[i].sleepArray[j];
+                targetGuard = guardArray[i];
+            }
+        }
+    }
+    console.log("Answer part B = " + minuteMostAsleep * parseInt(targetGuard.id));
 }
