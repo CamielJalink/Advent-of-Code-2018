@@ -77,27 +77,46 @@ function advent(error: Error, input: string){
         }
     }
 
-    console.log(positionArray);
+    
 
     for(let i = 0; i < positionArray.length; i++){
         let closestCoordinate: Coordinate = coordinates[0];
+        let closestCoordinateDist: number = determineDistance(closestCoordinate.x, closestCoordinate.y, positionArray[i].x, positionArray[i].y);
+        let hasMulipleClosestCoords: boolean = false;
+
         for(let j = 0; j < coordinates.length; j++){
-            // this still needs work.
+            let newCoordinateDist = determineDistance(coordinates[j].x, coordinates[j].y, positionArray[i].x, positionArray[i].y);
+            if(newCoordinateDist < closestCoordinateDist){
+                closestCoordinate = coordinates[j]; 
+                closestCoordinateDist = newCoordinateDist;
+            } else if(closestCoordinateDist === newCoordinateDist){
+                hasMulipleClosestCoords = true;
+                console.log(closestCoordinateDist);
+                console.log(closestCoordinateDist + "   " + newCoordinateDist + " i dunn did it"); 
+            }
+            
         }
-        positionArray[i].setClosestCoordinate(closestCoordinate);
+
+        if(hasMulipleClosestCoords === false){
+            positionArray[i].setClosestCoordinate(closestCoordinate);
+            console.log("i've arrived!"); 
+        }
+    }
+
+    for(let i = 0; i < positionArray.length; i++){
+        
     }
 }
 
 
 function determineDistance(x1:number, y1:number, x2:number, y2:number){
+    if( x1 < 0){ x1 *= -1 };
+    if( y1 < 0){ y1 *= -1 };
+    if( x2 < 0){ x2 *= -1 };
+    if( y2 < 0){ y2 *= -1 };
     return Math.abs(x2-x1) + Math.abs(y2-y1);
 }
 
-// Idee: Een class coordinates, die een x en een y coordinaat heeft.
-// --> Een class grid met een x en een y die zelf berekent bij welk coordinaat hij hoort,
-//     en dat de coordinaat een array met bij zich horende vakjes heeft. 
-// --> Coordinaten houden bij of ze infinite zijn of niet. 
-
-// 1. Lees alle coordinaten in. We kunnen de min en max X en Y bedenken, en dan hebben we een soort van beeld
-//    bij de grootte van het grid.
-// 2. STEL DAT: we gewoon alleen denken in termen van dat grid. 
+// Dus, ik heb een array bestaande uit allemaal coordinaten, behalve de daadwerkelijke GEGEVEN coordinaten. 
+// Voor elk zo'n nep-coordinaat wil ik kijken:
+//  Welk vak zit bij mij het meest in de buurt?
