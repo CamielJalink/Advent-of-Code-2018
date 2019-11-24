@@ -1,5 +1,4 @@
 # advent
-Repo created for the advent of code 2018 challenges
-
-Day1 and Day2part1 challenges are done in javascript and the read-input node module.
-For later challenges I switched to typescript.
+Repo created for the advent of code 2018 challenges.
+I attempted some of these challenges before starting my first job in front-end, 
+starting with basic JS and then attempting my first typescript.
